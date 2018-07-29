@@ -27,7 +27,7 @@ let verifyToken = ( req, res, next ) => {
 //==================================
 //     Verificación del rol
 //==================================
-let verifyAdminRole = ( req,res,next) =>{
+let verifyAdminRole = ( req, res, next ) =>{
 
   let usuario = req.usuario;
 
@@ -43,7 +43,32 @@ let verifyAdminRole = ( req,res,next) =>{
   }
 }
 
+//==================================
+//     Verificación token de la imagen
+//==================================
+let verifyTokenImg = ( req, res, next ) =>{
+
+  let token = req.query.token;
+
+  jwt.verify( token, process.env.SEED, (err, decoded) => {
+
+    if (err){
+      return res.status(401).json({
+        ok: false,
+        err: {
+          message: 'Error de Autenticación'
+        }
+      })
+    }
+
+    req.usuario = decoded.usuario;
+
+    next();
+  })
+}
+
 module.exports = {
   verifyToken,
-  verifyAdminRole
+  verifyAdminRole,
+  verifyTokenImg
 }
